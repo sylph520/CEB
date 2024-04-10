@@ -29,7 +29,7 @@ def test_pg_cost():
     ppc = get_eval_fn("ppc")
     errors = ppc.eval(qreps, preds, samples_type="test",
             result_dir=None, user = "ceb", db_name = "imdb",
-            db_host = "localhost", port = 5432,
+            db_host = "localhost", port = 51201,
             alg_name = "test")
 
     print("Postgres Plan Cost: ", np.mean(errors))

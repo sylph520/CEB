@@ -103,7 +103,7 @@ def read_flags():
     parser.add_argument("--template_dir", type=str, required=False,
             default=None)
     parser.add_argument("--port", type=str, required=False,
-            default=5432)
+            default=51201)
     parser.add_argument("--query_output_dir", type=str, required=False,
             default=None)
     parser.add_argument("--templates", type=str, required=False,

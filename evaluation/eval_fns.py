@@ -526,7 +526,7 @@ class PostgresPlanCost(EvalFunc):
     def eval(self, qreps, preds,
             user="ceb",
             pwd="password",
-            port=5432,
+            port=51201,
             db_name="imdb",
             db_host="localhost",
             num_processes=-1,
