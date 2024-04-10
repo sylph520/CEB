@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y \
     git \
     gcc \
     build-essential \
-    postgresql-server-dev-12
+    postgresql-server-dev-12 \
+	clang-7
 
 # this will be passed in from the command line
 ARG LCARD_USER
