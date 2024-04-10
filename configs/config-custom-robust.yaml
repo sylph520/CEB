@@ -50,7 +50,7 @@ db:
   db_host : "localhost"
   user    : "ceb"
   pwd     : "password"
-  port    : 5432
+  port    : 51201
 
 ## used for neural net featurization of queries;;
 featurizer:
