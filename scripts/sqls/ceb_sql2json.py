@@ -36,14 +36,13 @@ class DB_SCHEMA:
                 self.table_columns[tbl_name] = col_names
 
 
-def main(sql_path: str):
+def main(sql_path: str, num_rounds, round_size):
     db_schema = DB_SCHEMA
     with open(sql_path, 'r') as f:
         content = f.readlines()
 
     json_items = []
     id = 1
-    bsize = 16
     for sql_str in content:
         json_item = {}
         q_tbl_aliases = {}
@@ -119,8 +118,30 @@ def main(sql_path: str):
         json_items.append(json_item)
     output_json_path = '.'.join(input_sql_path.split('.')[0:-1]) + '.json'
     # print(json.dumps(json_items, indent=4))
+    json_items_to_save = []
+    if round_size == 16:
+        json_items_to_save = json_items
+    else:
+        total_q_num = len(json_items)
+        assert num_rounds * round_size == total_q_num
+        num_phases = 4
+        tpl_num = 16
+        phase_q_num = int(total_q_num / num_phases)
+        phase_tpl_num = int(tpl_num / num_phases)
+        phase_round_num = int(phase_q_num / round_size)
+        num_tpl_packs = int(total_q_num / tpl_num)
+
+        json_items_to_save = []
+        packed_qs = [json_items[i*tpl_num : (i+1)*tpl_num] for i in range(num_tpl_packs)]
+        __import__('ipdb').set_trace()
+        for p in range(num_phases):
+            # tpl: p * phase_tpl_num -> (p + 1) * phase_tpl_num
+            for r in range(phase_round_num):
+                round_idxs = packed_qs[r][p * phase_tpl_num: (p+1) * phase_tpl_num]
+                json_items_to_save.extend(round_idxs)
+
     with open(output_json_path, 'w') as f:
-        for i in json_items:
+        for i in json_items_to_save:
             f.write(json.dumps(i))
             f.write('\n')
 
@@ -230,7 +251,11 @@ def parse_columnref(opr, q_tbl_aliases: dict) -> COLUMN:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_sql', type=str, default='./imdb-sqls_25/concat_type1.sql')
+    parser.add_argument('--num_rounds', type=int, default=25)
+    parser.add_argument('--round_size', type=int, default=16)
     args = parser.parse_args()
     input_sql_path = args.input_sql
+    num_rounds = args.num_rounds
+    round_size = args.round_size
 
-    main(input_sql_path)
+    main(input_sql_path, num_rounds, round_size)
